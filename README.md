@@ -11,7 +11,8 @@ This app is used to detect number plates of the vehicles, by capturing their ima
 |Aditya Chandran|16010121031|[Aditya-Chandrn](https://www.github.com/Aditya-Chandrn)|
 |Omkar Boralkar|16010121027|[OmkarBoralkar1](https://github.com/OmkarBoralkar1)|
 
-#### Follow these steps to run thr app.
+### Steps to run app
+#### <u>Frontend</u>
 1. Add the .env file to get the server link.
 2. Use command `flutter pub get`, to download all the packages.
 3. To run, use `flutter run`.
