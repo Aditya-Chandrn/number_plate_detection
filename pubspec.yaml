@@ -1,0 +1,27 @@
+name: number_plate_detection
+description: "App to detect number plates"
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: 3.7.0
+
+dependencies:
+  camera: 0.11.1
+  cupertino_icons: 1.0.8
+  flutter:
+    sdk: flutter
+  flutter_dotenv: 5.2.1
+  http: 1.3.0
+  material_symbols_icons: 4.2805.1
+
+dev_dependencies:
+  flutter_lints: 5.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+
+assets:
+  - .env
