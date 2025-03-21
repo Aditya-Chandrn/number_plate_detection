@@ -7,7 +7,7 @@ from detection_model.models.yolo_model import load_model
 
 
 def correct_plate_text(text):
-    text = "".join(re.split("[^A-Z0-9]", text)).upper()
+    text = "".join(re.split("[^A-Z0-9]", text)).upper()  # Remove unwanted characters and convert to uppercase
     corrected_text = ""
 
     for i, char in enumerate(text):
@@ -15,22 +15,24 @@ def correct_plate_text(text):
             prev_char = text[i - 1] if i > 0 else None
             next_char = text[i + 1] if i < len(text) - 1 else None
 
-            if prev_char and prev_char.isalpha() and next_char and next_char.isdigit():
-                corrected_text += '0'  # If a letter is before it and a number is after it, it's zero
+            if prev_char and prev_char.isdigit():
+                corrected_text += '0'  # If the previous character is a number, keep '0'
+            elif prev_char and prev_char.isalpha() and next_char and next_char.isdigit():
+                corrected_text += '0'  # If a letter is before and a number is after, it's zero
             elif prev_char and prev_char.isdigit() and next_char and next_char.isdigit():
-                corrected_text += '0'  # If it's between numbers, it's zero
+                corrected_text += '0'  # If between numbers, it's zero
             else:
                 corrected_text += 'O'  # Otherwise, assume 'O'
         else:
             corrected_text += char
 
-    # Fix known license plate format errors
+    # Fix known license plate format errors (e.g., replace 'O' with '0' in state codes)
     if re.match(r"^[A-Z]{2}O\d", corrected_text):
-        corrected_text = corrected_text[:2] + '0' + corrected_text[3:]  # Replace 'O' with '0' in state code
+        corrected_text = corrected_text[:2] + '0' + corrected_text[3:]
 
     return corrected_text
 
-    
+
 def detect_number_plate(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
