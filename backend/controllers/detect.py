@@ -1,7 +1,10 @@
 import base64
-
+import cv2
+import numpy as np
+from detection_model.services.detection import detect_number_plate, detect_vehicle
 from constants import IMAGE_PATH
 from db import DB
+
 
 
 async def detect(base64_string):
@@ -9,12 +12,16 @@ async def detect(base64_string):
     try:
         # convert base64 string to image file
         image_data = base64.b64decode(base64_string)
-        with open(IMAGE_PATH, "wb") as f:
-            f.write(image_data)
+        file_bytes = np.frombuffer(image_data, np.uint8)
+        img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+
+        # Detect Number Plate
+        vehicle_number , plate_bbox = detect_number_plate(img)
+        print("********************",vehicle_number)
+        
 
         # get vehicle number from detection model
         # TODO: function call
-        vehicle_number = "DL10CD5678"
 
         # get user data
         user = await npd.users.find_one({"vehicle_number": vehicle_number}, {"_id": 0})
