@@ -4,27 +4,56 @@ import re
 from detection_model.utils.image_utils import preprocess_plate  
 from detection_model.models.yolo_model import load_model
 
+
+
+def correct_plate_text(text):
+    text = "".join(re.split("[^A-Z0-9]", text)).upper()
+    corrected_text = ""
+
+    for i, char in enumerate(text):
+        if char in {'O', '0'}:
+            prev_char = text[i - 1] if i > 0 else None
+            next_char = text[i + 1] if i < len(text) - 1 else None
+
+            if prev_char and prev_char.isalpha() and next_char and next_char.isdigit():
+                corrected_text += '0'  # If a letter is before it and a number is after it, it's zero
+            elif prev_char and prev_char.isdigit() and next_char and next_char.isdigit():
+                corrected_text += '0'  # If it's between numbers, it's zero
+            else:
+                corrected_text += 'O'  # Otherwise, assume 'O'
+        else:
+            corrected_text += char
+
+    # Fix known license plate format errors
+    if re.match(r"^[A-Z]{2}O\d", corrected_text):
+        corrected_text = corrected_text[:2] + '0' + corrected_text[3:]  # Replace 'O' with '0' in state code
+
+    return corrected_text
+
+    
 def detect_number_plate(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
     edges = cv2.Canny(blur, 50, 200)
-    
+
     contours, _ = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in contours:
         x, y, w, h = cv2.boundingRect(cnt)
         aspect_ratio = w / h
         area = w * h
-        
+
         if 1000 < area < 100000 and 2 < aspect_ratio < 6:
             plate_img = img[y:y + h, x:x + w]
             processed_plate = preprocess_plate(plate_img)
-            
+
             text = pytesseract.image_to_string(processed_plate, config="--psm 8 --oem 1")
-            text = "".join(re.split("[^A-Z0-9]", text)).upper()
-            
-            if len(text) > 4:
-                return text, (x, y, w, h)
+            corrected_text = correct_plate_text(text)
+
+            if len(corrected_text) > 4:
+                return corrected_text, (x, y, w, h)
+    
     return None, None
+
 
 def detect_vehicle(img, plate_bbox):
     model = load_model()

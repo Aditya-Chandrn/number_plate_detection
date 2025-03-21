@@ -17,9 +17,12 @@ async def detect(base64_string):
 
         # Detect Number Plate
         vehicle_number , plate_bbox = detect_number_plate(img)
-        print("********************",vehicle_number)
-        
-
+        print("***********************",vehicle_number)
+        print("************************",plate_bbox )
+        if  vehicle_number:
+            vehicle_info = detect_vehicle(img, plate_bbox)
+            vehicle_type = vehicle_info[0] if vehicle_info else "Unknown"
+            print("******************************", vehicle_type)
         # get vehicle number from detection model
         # TODO: function call
 
