@@ -2,7 +2,7 @@ from db import DB
 from datetime import datetime
 
 
-async def apply_fine(user_id: int, fine: int):
+async def apply_fine(user_id: int, reason: str, fine: int):
     npd = DB.npd
     try:
         # check user
@@ -21,6 +21,7 @@ async def apply_fine(user_id: int, fine: int):
         new_case = {
             "user_id": user_id,
             "fine": total_fine,
+            "reason": reason,
             "status": False,
             "timestamp": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
         }
