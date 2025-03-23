@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:number_plate_detection/utils/constants.dart';
+import 'package:number_plate_detector/utils/constants.dart';
 
 class Button extends StatefulWidget {
   final String name;

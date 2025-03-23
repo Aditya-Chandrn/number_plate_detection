@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:number_plate_detection/pages/home.dart';
-import "package:flutter_dotenv/flutter_dotenv.dart";
+import 'package:number_plate_detector/pages/home.dart';
+import 'package:number_plate_detector/utils/constants.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load();
+void main() {
+  ApiUrls.init();
   runApp(const MyApp());
 }
 

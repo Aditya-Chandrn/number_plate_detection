@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:number_plate_detection/components/camera.dart';
-import 'package:number_plate_detection/components/display_image.dart';
+import 'package:number_plate_detector/components/camera.dart';
+import 'package:number_plate_detector/components/display_image.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});

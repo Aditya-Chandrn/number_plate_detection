@@ -1,9 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:number_plate_detection/api_calls/detect_api_call.dart';
-import 'package:number_plate_detection/components/button.dart';
-import 'package:number_plate_detection/pages/info.dart';
+import 'package:number_plate_detector/api_calls/detect.dart';
+import 'package:number_plate_detector/components/button.dart';
+import 'package:number_plate_detector/pages/info.dart';
 
 class DisplayImage extends StatefulWidget {
   final String imagePath;
@@ -20,44 +21,52 @@ class DisplayImage extends StatefulWidget {
 }
 
 class DisplayImageState extends State<DisplayImage> {
-  bool isLoading = false;
+  bool _isLoading = false;
 
-  void _detectVehicle() async {
-    setState(() {
-      isLoading = true;
-    });
+  Future<void> _confirmImage() async {
+    setState(() => _isLoading = true);
 
-    Map<String, dynamic>? data = await detectApiCall();
+    try {
+      File imageFile = File(widget.imagePath);
+      List<int> imageBytes = await imageFile.readAsBytes();
+      String base64String = base64Encode(imageBytes);
 
-    if (!mounted) return;
+      final details = await detectApiCall(base64String);
 
-    setState(() {
-      isLoading = false;
-    });
-
-    if (data != null) {
-      Navigator.push(
+      if (details != null) {
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Info(details: details)),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Unable to detect vehicle")),
+        );
+      }
+    } catch (e) {
+      print("Error: $e");
+      ScaffoldMessenger.of(
         context,
-        MaterialPageRoute(builder: (context) => Info(data: data)),
-      );
+      ).showSnackBar(const SnackBar(content: Text("Error processing image")));
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(child: Image.file(File(widget.imagePath), height: 300)),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Button(name: "Retake", action: widget.cancelCapture),
-            Button(name: "Confirm", action: _detectVehicle),
-          ],
-        ),
+        const SizedBox(height: 20),
+        Button(name: "Retake", action: widget.cancelCapture),
+        _isLoading
+            ? const CircularProgressIndicator()
+            : Button(name: "Confirm", action: _confirmImage),
       ],
     );
   }

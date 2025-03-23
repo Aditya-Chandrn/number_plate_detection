@@ -21,9 +21,10 @@ async def detect_route():
 async def apply_fine_route():
     req = await request.get_json()
     user_id = int(req.get("user_id"))
-    fine = int(req.get("fine"))
+    reasons = req.get("reasons")
+    print(user_id, reasons)
 
-    result = await apply_fine(user_id, fine)
+    result = await apply_fine(user_id, reasons)
     return jsonify(
-        {"message": result.get("message"), "history": result.get("history")}
+        {"message": result.get("message"), "details": result.get("details")}
     ), result.get("status")

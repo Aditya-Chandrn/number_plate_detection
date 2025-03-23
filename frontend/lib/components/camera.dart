@@ -1,7 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:number_plate_detection/components/button.dart';
+import 'package:number_plate_detector/components/button.dart';
 
 class Camera extends StatefulWidget {
   final Function(String) captureImage;
@@ -61,10 +61,11 @@ class _CameraState extends State<Camera> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
-          child: RotatedBox(quarterTurns: 1, child: CameraPreview(_controller)),
+          child: RotatedBox(quarterTurns: 0, child: CameraPreview(_controller)),
         ),
         SizedBox(height: 10),
         Button(name: "Capture", action: _captureImage),
+        SizedBox(height: 20),
       ],
     );
   }

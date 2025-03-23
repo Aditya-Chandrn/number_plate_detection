@@ -1,6 +1,6 @@
 {
-    "name": "number_plate_detection",
-    "short_name": "number_plate_detection",
+    "name": "number_plate_detector",
+    "short_name": "number_plate_detector",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
