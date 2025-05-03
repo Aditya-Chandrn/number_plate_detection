@@ -43,7 +43,7 @@ class Info extends StatelessWidget {
                   children: [
                     // 🟢 User Image
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
+                      borderRadius: BorderRadius.circular(5),
                       child:
                           imageBytes != null
                               ? Image.memory(
@@ -144,27 +144,33 @@ class Info extends StatelessWidget {
             const SizedBox(height: 16),
 
             // 🟢 Buttons Section
-            Button(
-              name: "Apply Fine",
-              action: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ApplyFine(userId: details["user_id"]),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 10),
-            Button(
-              name: "Capture Image",
-              action: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Home()),
-                  (route) => false,
-                );
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Button(
+                  name: "Apply Fine",
+                  action: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => ApplyFine(userId: details["user_id"]),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 10),
+                Button(
+                  name: "Capture Image",
+                  action: () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Home()),
+                      (route) => false,
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),

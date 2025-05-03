@@ -14,15 +14,15 @@ class Camera extends StatefulWidget {
 
 class _CameraState extends State<Camera> {
   late CameraController _controller;
+  late Future<void> _initializeControllerFuture;
 
   @override
   void initState() {
     super.initState();
-
-    _initializeCamera();
+    _initializeControllerFuture = _initializeCamera();
   }
 
-  void _initializeCamera() async {
+  Future<void> _initializeCamera() async {
     final cameras = await availableCameras();
     _controller = CameraController(
       cameras.first,
@@ -34,8 +34,6 @@ class _CameraState extends State<Camera> {
     if (mounted) {
       await _controller.lockCaptureOrientation(DeviceOrientation.portraitUp);
     }
-
-    setState(() {});
   }
 
   @override
@@ -52,21 +50,28 @@ class _CameraState extends State<Camera> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_controller.value.isInitialized) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(
-          child: RotatedBox(quarterTurns: 0, child: CameraPreview(_controller)),
-        ),
-        SizedBox(height: 10),
-        Button(name: "Capture", action: _captureImage),
-        SizedBox(height: 20),
-      ],
+    return FutureBuilder(
+      future: _initializeControllerFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return const Center(child: Text("Error initializing camera"));
+        } else {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: RotatedBox(quarterTurns: 0, child: CameraPreview(_controller)),
+              ),
+              const SizedBox(height: 10),
+              Button(name: "Capture", action: _captureImage),
+              const SizedBox(height: 20),
+            ],
+          );
+        }
+      },
     );
   }
 }

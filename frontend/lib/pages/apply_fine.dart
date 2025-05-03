@@ -91,26 +91,30 @@ class _ApplyFineState extends State<ApplyFine> {
             const SizedBox(height: 20),
 
             // 🟢 Buttons (Confirm & Cancel)
-            Button(
-              name: "Confirm",
-              action: () {
-                if (selectedReasons.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Please select at least one reason."),
-                    ),
-                  );
-                } else {
-                  _confirm();
-                }
-              },
-            ),
-            const SizedBox(height: 10),
-            Button(
-              name: "Cancel",
-              action: () {
-                Navigator.pop(context);
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Button(
+                  name: "Confirm",
+                  action: () {
+                    if (selectedReasons.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Please select at least one reason."),
+                        ),
+                      );
+                    } else {
+                      _confirm();
+                    }
+                  },
+                ),
+                Button(
+                  name: "Cancel",
+                  action: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
             ),
           ],
         ),

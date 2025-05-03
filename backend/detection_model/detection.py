@@ -6,36 +6,39 @@ from .yolo_model import load_model
 
 
 def correct_plate_text(text):
-    text = "".join(
-        re.split("[^A-Z0-9]", text)
-    ).upper()  # Remove unwanted characters and convert to uppercase
+    # Remove non-alphanumeric characters and convert to uppercase
+    text = "".join(re.split("[^A-Z0-9]", text)).upper()
+
+    length = len(text)  # Get the length of the extracted plate number
+    if length < 9:
+        return text  # If too short, return as is
+
     corrected_text = ""
 
     for i, char in enumerate(text):
+        pos = i + 1  # Convert 0-based index to 1-based index
+
+        # Determine if this position should be a letter or number
+        is_letter = (length == 10 and pos in {1, 2, 5, 6}) or (
+            length == 9 and pos in {1, 2, 5}
+        )
+        is_number = not is_letter  # Everything else should be a number
+
+        # Correct common OCR mistakes based on position
         if char in {"O", "0"}:
-            prev_char = text[i - 1] if i > 0 else None
-            next_char = text[i + 1] if i < len(text) - 1 else None
-
-            if prev_char and prev_char.isdigit():
-                corrected_text += "0"  # If the previous character is a number, keep '0'
-            elif (
-                prev_char and prev_char.isalpha() and next_char and next_char.isdigit()
-            ):
-                corrected_text += (
-                    "0"  # If a letter is before and a number is after, it's zero
-                )
-            elif (
-                prev_char and prev_char.isdigit() and next_char and next_char.isdigit()
-            ):
-                corrected_text += "0"  # If between numbers, it's zero
-            else:
-                corrected_text += "O"  # Otherwise, assume 'O'
+            corrected_text += "O" if is_letter else "0"
+        elif char in {"S", "5"}:
+            corrected_text += "S" if is_letter else "5"
+        elif char in {"Z", "2"}:
+            corrected_text += "Z" if is_letter else "2"
+        elif char in {"I", "1"}:
+            corrected_text += "I" if is_letter else "1"
+        elif char in {"B", "8"}:
+            corrected_text += "B" if is_letter else "8"
+        elif char in {"G", "6"}:
+            corrected_text += "G" if is_letter else "6"
         else:
-            corrected_text += char
-
-    # Fix known license plate format errors (e.g., replace 'O' with '0' in state codes)
-    if re.match(r"^[A-Z]{2}O\d", corrected_text):
-        corrected_text = corrected_text[:2] + "0" + corrected_text[3:]
+            corrected_text += char  # Keep character if it doesn’t need correction
 
     return corrected_text
 
@@ -57,10 +60,11 @@ def detect_number_plate(img):
 
             text = pytesseract.image_to_string(
                 processed_plate, config="--psm 8 --oem 1"
-            )
+            ).strip()
             corrected_text = correct_plate_text(text)
 
-            if len(corrected_text) > 4:
+            # Ensure corrected text has valid format & last 4 characters are alphanumeric
+            if corrected_text and len(corrected_text) > 4:
                 return corrected_text, (x, y, w, h)
 
     return None, None

@@ -63,10 +63,15 @@ class DisplayImageState extends State<DisplayImage> {
       children: [
         Expanded(child: Image.file(File(widget.imagePath), height: 300)),
         const SizedBox(height: 20),
-        Button(name: "Retake", action: widget.cancelCapture),
-        _isLoading
-            ? const CircularProgressIndicator()
-            : Button(name: "Confirm", action: _confirmImage),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Button(name: "Retake", action: widget.cancelCapture),
+            _isLoading
+                ? const CircularProgressIndicator()
+                : Button(name: "Confirm", action: _confirmImage),
+          ],
+        ),
       ],
     );
   }
