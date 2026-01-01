@@ -5,14 +5,23 @@ import 'package:http/http.dart' as http;
 
 Future<Map<String, dynamic>?> detectApiCall(String base64String) async {
   try {
+    print("IMAGE RECEIVED");
     final response = await http.post(
       ApiUrls.detect,
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({"base64_string": base64String}),
     );
-    return jsonDecode(response.body)["details"];
+    print("RESPONSE RECEIVED");
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)["details"];
+    } else {
+      print("API error: ${response.statusCode}, body: ${response.body}");
+      return null;
+    }
   } catch (error) {
     print("Error detecting vehicle: $error");
     return null;
   }
 }
+

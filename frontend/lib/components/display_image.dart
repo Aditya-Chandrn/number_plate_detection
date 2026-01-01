@@ -27,9 +27,12 @@ class DisplayImageState extends State<DisplayImage> {
     setState(() => _isLoading = true);
 
     try {
+    print("HERE 1");
+
       File imageFile = File(widget.imagePath);
       List<int> imageBytes = await imageFile.readAsBytes();
       String base64String = base64Encode(imageBytes);
+    print("HERE 2");
 
       final details = await detectApiCall(base64String);
 

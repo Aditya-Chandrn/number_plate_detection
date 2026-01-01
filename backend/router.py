@@ -28,3 +28,8 @@ async def apply_fine_route():
     return jsonify(
         {"message": result.get("message"), "details": result.get("details")}
     ), result.get("status")
+
+
+@router.route("/hello", methods=["GET"])
+async def hello():
+    return "hello"

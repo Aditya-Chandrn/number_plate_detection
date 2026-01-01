@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Constants {
   static const Color theme = Colors.deepPurple;
@@ -13,7 +12,8 @@ class ApiUrls {
   static Future<void> init() async {
     // await dotenv.load();
     // _serverUrl = dotenv.env["SERVER_URL"] ?? "http://localhost:8000/api";
-    _serverUrl = "http://192.168.29.165:8000/api";
+    _serverUrl = "http://192.168.18.23:8000/api";
+    print(_serverUrl);
 
     detect = Uri.parse("$_serverUrl/detect");
     applyFine = Uri.parse("$_serverUrl/apply-fine");
